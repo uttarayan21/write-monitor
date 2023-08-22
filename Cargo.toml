@@ -1,13 +1,12 @@
 [package]
 name = "write-monitor"
-version = "0.1.0"
+version = "0.0.1-alpha.1"
 edition = "2021"
 description = "Monitor the number of bytes being written"
+license = "MIT"
 documentation = "https://docs.rs/write-monitor"
 homepage = "https://github.com/uttarayan21/write-monitor"
 repository = "https://github.com/uttarayan21/write-monitor"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 futures = { version = "0.3.28", optional = true }
