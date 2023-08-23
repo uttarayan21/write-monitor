@@ -1,6 +1,6 @@
 [package]
 name = "write-monitor"
-version = "0.0.1-alpha.2"
+version = "0.0.1-alpha.3"
 edition = "2021"
 description = "Monitor the number of bytes being written"
 license = "MIT"

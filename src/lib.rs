@@ -32,6 +32,7 @@ use core::sync::atomic::{AtomicU64, Ordering};
 use core::{pin::Pin, task::Poll};
 
 #[cfg_attr(any(feature = "futures", feature = "tokio"), pin_project::pin_project)]
+#[derive(Debug, Clone)]
 pub struct WriteMonitor<W> {
     #[cfg_attr(any(feature = "futures", feature = "tokio"), pin)]
     inner: W,
@@ -56,6 +57,7 @@ impl<W> WriteMonitor<W> {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Monitor {
     bytes_written: Arc<AtomicU64>,
 }
