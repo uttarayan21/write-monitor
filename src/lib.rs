@@ -46,14 +46,15 @@ impl<W> WriteMonitor<W> {
             bytes_written: Arc::new(AtomicU64::new(0)),
         }
     }
+
     pub fn bytes_written(&self) -> u64 {
         self.bytes_written.load(Ordering::Acquire)
     }
 
-    pub fn monitor(&self) -> Monitor<'_> {
+    /// If the writer is dropped the monitor doesn't need to be dropped but it will stop updating.
+    pub fn monitor(&self) -> Monitor {
         Monitor {
             bytes_written: self.bytes_written.clone(),
-            __marker: core::marker::PhantomData,
         }
     }
 
@@ -63,11 +64,9 @@ impl<W> WriteMonitor<W> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Monitor<'m> {
+pub struct Monitor {
     bytes_written: Arc<AtomicU64>,
-    __marker: core::marker::PhantomData<&'m WriteMonitor<()>>,
 }
-
 
 impl Monitor {
     pub fn bytes_written(&self) -> u64 {
@@ -154,4 +153,16 @@ impl<W: std::io::Write> std::io::Write for WriteMonitor<W> {
     fn flush(&mut self) -> std::io::Result<()> {
         self.inner.flush()
     }
+}
+
+#[test]
+pub fn test_write_monitor() {
+    use std::io::Write;
+    let mut buf = Vec::new();
+    let mut wm = WriteMonitor::new(&mut buf);
+    let big_data = b"Hello World";
+    let big_data_len = big_data.len();
+    let monitor = wm.monitor();
+    wm.write_all(big_data).unwrap();
+    assert_eq!(monitor.bytes_written(), big_data_len as u64);
 }
