@@ -50,17 +50,24 @@ impl<W> WriteMonitor<W> {
         self.bytes_written.load(Ordering::Acquire)
     }
 
-    pub fn monitor(&self) -> Monitor {
+    pub fn monitor(&self) -> Monitor<'_> {
         Monitor {
             bytes_written: self.bytes_written.clone(),
+            __marker: core::marker::PhantomData,
         }
+    }
+
+    pub fn into_inner(self) -> W {
+        self.inner
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct Monitor {
+pub struct Monitor<'m> {
     bytes_written: Arc<AtomicU64>,
+    __marker: core::marker::PhantomData<&'m WriteMonitor<()>>,
 }
+
 
 impl Monitor {
     pub fn bytes_written(&self) -> u64 {
